@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARTee Messenger</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ===== LOGIN SCREEN ===== -->
+  <div id="login-screen">
+    <div class="login-container">
+      <h1>ARTee Messenger</h1>
+      <p>Видеоконференции, голосовые звонки и текстовый чат</p>
+      <input type="text" id="username-input" placeholder="Введите ваше имя..." maxlength="30">
+      <button id="login-btn">Войти</button>
+    </div>
+  </div>
+
+  <!-- ===== MAIN APP ===== -->
+  <div id="main-app">
+    <div class="app-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2>ARTee</h2>
+          <span class="user-badge" id="current-username">—</span>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Подключение</h3>
+          <div class="room-controls" style="flex-direction:column;gap:8px;">
+            <button id="create-offer-btn" class="call-btn video" style="width:100%;">🔗 Создать комнату</button>
+            <input type="text" id="remote-offer-input" placeholder="Вставьте код собеседника...">
+            <button id="connect-btn" class="call-btn voice" style="width:100%;">🔌 Подключиться</button>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Собеседник</h3>
+          <div id="peer-status" style="text-align:center;padding:12px;color:var(--text-secondary);font-size:13px;">
+            Ожидание подключения...
+          </div>
+          <div id="peer-info" style="display:none;text-align:center;padding:8px;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;">
+              <span class="user-status"></span>
+              <span id="peer-name" style="font-size:14px;font-weight:600;">—</span>
+            </div>
+            <button id="voice-call-btn" class="call-btn voice" style="width:100%;margin-bottom:4px;">🎧 Голосовой звонок</button>
+            <button id="video-call-btn" class="call-btn video" style="width:100%;">📹 Видеозвонок</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="chat-header">
+          <h3 id="chat-title">ARTee Messenger</h3>
+          <div id="connection-badge" style="font-size:12px;padding:4px 12px;border-radius:20px;background:var(--bg-input);color:var(--text-secondary);">
+            Не подключено
+          </div>
+        </div>
+
+        <div class="messages-area" id="messages-area">
+          <div style="text-align:center;color:var(--text-secondary);padding:40px 20px;">
+            <p>Добро пожаловать в ARTee Messenger! 🎉</p>
+            <p style="margin-top:12px;font-size:13px;">
+              1️⃣ Нажмите <strong>"Создать комнату"</strong> и отправьте код собеседнику<br>
+              2️⃣ Или вставьте код собеседника и нажмите <strong>"Подключиться"</strong>
+            </p>
+            <p style="margin-top:12px;font-size:12px;color:var(--text-secondary);">
+              После подключения можно общаться текстом, голосом и по видео!
+            </p>
+          </div>
+        </div>
+
+        <div class="message-input-area">
+          <input type="text" id="message-input" placeholder="Введите сообщение..." maxlength="500" disabled>
+          <button id="send-btn" disabled>Отправить</button>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ===== CALL OVERLAY ===== -->
+  <div id="call-overlay">
+    <div class="call-container">
+      <div class="call-avatar">📞</div>
+      <h2 id="call-username">—</h2>
+      <p class="call-status" id="call-status">Звонок...</p>
+      <div class="call-timer" id="call-timer">00:00</div>
+      <div class="call-actions">
+        <button class="call-action-btn mute" id="mute-btn">🎤</button>
+        <button class="call-action-btn end" id="end-call-btn">📞</button>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;">
+        <video id="local-video" autoplay muted playsinline style="display:none;width:120px;border-radius:8px;background:#000;"></video>
+        <video id="remote-video" autoplay playsinline style="display:none;width:120px;border-radius:8px;background:#000;"></video>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SIGNALING MODAL ===== -->
+  <div id="signaling-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:999;justify-content:center;align-items:center;">
+    <div style="background:var(--bg-card);border-radius:var(--radius);padding:32px;max-width:500px;width:90%;box-shadow:var(--shadow);">
+      <h3 style="margin-bottom:12px;">🔗 Код приглашения</h3>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">
+        Отправьте этот код вашему собеседнику. Он должен вставить его в поле "Вставьте код собеседника" и нажать "Подключиться".
+      </p>
+      <textarea id="signaling-code" readonly style="width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-input);color:var(--text-primary);font-size:12px;font-family:monospace;resize:none;height:120px;margin-bottom:16px;outline:none;"></textarea>
+      <button id="copy-code-btn" style="padding:10px 20px;border:none;border-radius:var(--radius-sm);background:var(--primary);color:white;font-size:14px;cursor:pointer;margin-right:8px;">📋 Копировать</button>
+      <button id="close-modal-btn" style="padding:10px 20px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--text-primary);font-size:14px;cursor:pointer;">Закрыть</button>
+    </div>
+  </div>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="js/webrtc.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
