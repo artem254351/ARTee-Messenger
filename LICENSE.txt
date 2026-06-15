@@ -1,6 +1,6 @@
 ПРОПРИЕТАРНАЯ ЛИЦЕНЗИЯ (PROPRIETARY LICENSE)
 
-Дата: 2026-06-05
+Дата: 2026-06-16
 Автор: artem254351
 
 Программа: Cat Care Game (CatCareGame.exe)
